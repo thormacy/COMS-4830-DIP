@@ -1,8 +1,8 @@
 clc;clear;
 tic;
-input_image = im2double(imread('input/text.png'));
-mask_image = im2double(rgb2gray(imread('input/text_mask.png')));
-window_size = 7;
+input_image = im2double(imread('input/wood.png'));
+mask_image = im2double(rgb2gray(imread('input/wood_mask.png')));
+window_size = 9;
 half_window = floor(window_size / 2);
 [num_rows, num_cols, num_channels] = size(input_image);
 [output_image, filled_map] = generate_filled_map(input_image,mask_image);
@@ -12,6 +12,7 @@ imshow(input_image);
 
 ref_y1=1;ref_x1=1;
 ref_y2=120;ref_x2=120;
+
 
 ref_image = input_image(ref_x1:ref_x2,ref_y1:ref_y2,:);
 num_horiz_candidates = ref_x2 - ref_x1 - window_size + 2;
@@ -38,9 +39,12 @@ gaussian = fspecial('gaussian', [window_size window_size], window_size / sigma);
 gaussian_vec = reshape(gaussian, [], 1);
 gaussian_vec = repmat(gaussian_vec, size(candidates, 3), 1);
 
-
+masked_image=output_image;
 figure();
-imshow(output_image);
+imshow(masked_image);
+marked_image = rect_image(masked_image,ref_y1,ref_x1,ref_y2,ref_x2);
+figure();
+imshow(marked_image);
 figure();
 error_threshold = 0.05;
 max_error_threshold = 0.3;
