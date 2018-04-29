@@ -1,17 +1,17 @@
 clc;clear;
 tic;
-input_image = im2double(imread('161.png'));
-mask_image = im2double(rgb2gray(imread('161_mask.png')));
-window_size = 17;
+input_image = im2double(imread('input/text.png'));
+mask_image = im2double(rgb2gray(imread('input/text_mask.png')));
+window_size = 7;
 half_window = floor(window_size / 2);
 [num_rows, num_cols, num_channels] = size(input_image);
-[output_image, filled_map] = generate_filled_map(input_image,mask_image );
+[output_image, filled_map] = generate_filled_map(input_image,mask_image);
 
 figure();
 imshow(input_image);
 
 ref_y1=1;ref_x1=1;
-ref_y2=128;ref_x2=128;
+ref_y2=120;ref_x2=120;
 
 ref_image = input_image(ref_x1:ref_x2,ref_y1:ref_y2,:);
 num_horiz_candidates = ref_x2 - ref_x1 - window_size + 2;
@@ -42,17 +42,17 @@ gaussian_vec = repmat(gaussian_vec, size(candidates, 3), 1);
 figure();
 imshow(output_image);
 figure();
-error_threshold = 0.1;
+error_threshold = 0.05;
 max_error_threshold = 0.3;
 
 while ~all(all(filled_map))
 
     found_match = false;
-    unfilled_pixels = getUnfilledPixels(filled_map);
+    unfilled_pixels = get_unfilled_pixels(filled_map);
     for pixel = unfilled_pixels
         [pix_row, pix_col] = ind2sub(size(filled_map), pixel);
         
-        [neighbourhood, mask] = getNeighbourhood(output_image, filled_map, pix_row, pix_col, window_size);
+        [neighbourhood, mask] = get_neighbourhood(output_image, filled_map, pix_row, pix_col, window_size);
         
         neighbourhood_vec = reshape(neighbourhood, [], 1);
         neighbourhood_rep = repmat(neighbourhood_vec, 1, size(candidates, 2));
